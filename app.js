@@ -18,7 +18,7 @@ mongoose.connect(DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
+app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 

@@ -11,7 +11,6 @@ module.exports.addCard = (req, res, next) => {
     .then((card) => {
       Card.findById(card._id)
         .orFail()
-        .populate('owner')
         .then((data) => res.status(HTTP_STATUS_CREATED).send(data))
         .catch((err) => {
           if (err instanceof mongoose.Error.DocumentNotFoundError) {
@@ -50,7 +49,7 @@ module.exports.deleteCard = (req, res, next) => {
         })
         .catch((error) => {
           if (error instanceof mongoose.Error.DocumentNotFoundError) {
-            next(new NotFoundError(`Карточка с _id: ${req.params.cardId} не найдена.`));
+            next(new NotFoundError('Карточка с заданным _id не найдена.'));
           } else if (error instanceof mongoose.Error.CastError) {
             next(new BadRequestError('Некорректный _id карточки'));
           } else {

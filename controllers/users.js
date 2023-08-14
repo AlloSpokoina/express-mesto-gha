@@ -77,7 +77,7 @@ module.exports.editUserAvatar = (req, res, next) => {
       if (err instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError(err.message));
       } else if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        next(new NotFoundError('Пользователя с таким _id не существует.'));
       } else {
         next(err);
       }
