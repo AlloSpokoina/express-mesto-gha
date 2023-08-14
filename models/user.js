@@ -1,28 +1,28 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const validator = require('validator');
 const UnautorizedError = require('../error/UnautorizedError');
 const ForbiddenError = require('../error/ForbiddenError');
+const urlRegex = require('../utils/regex');
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
     default: 'Жак-Ив Кусто',
-    minlength: [2, 'Минимальная длина поля -2'],
-    maxlength: [30, 'Максимальная длина поля-30'],
+    minlength: [2, 'Минимальная длина поля - 2'],
+    maxlength: [30, 'Максимальная длина поля- 30'],
   },
   about: {
     type: String,
     default: 'Исследователь',
-    minlength: [2, 'Минимальная длина поля -2'],
-    maxlength: [30, 'Максимальная длина поля-30'],
+    minlength: [2, 'Минимальная длина поля - 2'],
+    maxlength: [30, 'Максимальная длина поля- 30'],
   },
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator(url) {
-        return /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/.test(url);
+      validator(v) {
+        return urlRegex.test(v);
       },
       message: 'Введите URL',
     },
@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator(email) {
-        validator.isEmail(email);
+        return /^\S+@\S+\.\S+$/.test(email);
       },
       message: 'Введите верный email',
     },
