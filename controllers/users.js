@@ -7,6 +7,8 @@ const BadRequestError = require('../error/BadRequestError');
 const NotFoundError = require('../error/NotFoundError');
 const ConflictError = require('../error/ConflictError');
 
+const { SECRET_KEY = 'mestogha' } = process.env;
+
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(HTTP_STATUS_OK).send(users))
@@ -40,13 +42,13 @@ module.exports.addUser = (req, res, next) => {
       .then((user) => res.status(HTTP_STATUS_CREATED).send({
         name: user.name, about: user.about, avatar: user.avatar, _id: user._id, email: user.email,
       }))
-      .catch((error) => {
-        if (error.code === 11000) {
+      .catch((err) => {
+        if (err.code === 11000) {
           next(new ConflictError(`Пользователь с email: ${email} уже зарегистрирован`));
-        } else if (error instanceof mongoose.Error.ValidationError) {
-          next(new BadRequestError(error.message));
+        } else if (err instanceof mongoose.Error.ValidationError) {
+          next(new BadRequestError(err.message));
         } else {
-          next(error);
+          next(err);
         }
       }));
 };
@@ -86,7 +88,7 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'mestogha', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: '7d' });
       res.send({ token });
     })
     .catch((error) => {
