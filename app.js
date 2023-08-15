@@ -18,14 +18,6 @@ mongoose.connect(DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-const limiter = rateLimiter({
-  max: 5,
-  windowMS: 10000, // 10 seconds
-  message: "You can't make any more requests at the moment. Try again later",
-});
-app.use(limiter);
-
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
@@ -33,6 +25,13 @@ app.use('/cards', require('./routes/cards'));
 app.use('*', (req, res, next) => {
   next(new NotfoundError('Запрашиваемый ресурс не найден'));
 });
+
+const limiter = rateLimiter({
+  max: 5,
+  windowMS: 10000, // 10 seconds
+  message: "You can't make any more requests at the moment. Try again later",
+});
+app.use(limiter);
 
 app.use(errors());
 
