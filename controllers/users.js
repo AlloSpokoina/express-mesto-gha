@@ -20,14 +20,14 @@ module.exports.getUserById = (req, res, next) => {
     .orFail()
     .then((user) => {
       res.status(HTTP_STATUS_OK).send(user);
-    })
-    .catch((error) => {
+    }).catch((error) => {
       if (error instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Передан некорректный _id'));
       } else if (error instanceof mongoose.Error.DocumentNotFoundError) {
         next(new NotFoundError('Не найден пользователь по указанному _id'));
+      } else {
+        next(error);
       }
-      next(error);
     });
 };
 
