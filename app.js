@@ -25,10 +25,10 @@ mongoose.connect(DB_URL, {
   useUnifiedTopology: true,
 });
 
-app.use(limiter);
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+app.use(limiter);
 
 app.use('*', (req, res, next) => {
   next(new NotfoundError('Запрашиваемый ресурс не найден'));
