@@ -28,6 +28,7 @@ mongoose.connect(DB_URL, {
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
 app.use(limiter);
 
 app.use('*', (req, res, next) => {
