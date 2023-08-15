@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimiter = require('express-rate-limit');
-const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const NotfoundError = require('./error/NotFoundError');
 
@@ -12,12 +11,12 @@ const app = express();
 
 const limiter = rateLimiter({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 50,
 });
 app.use(limiter);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 
 mongoose.connect(DB_URL, {
