@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const UnautorizedError = require('../error/UnautorizedError');
-const ForbiddenError = require('../error/ForbiddenError');
 const urlRegex = require('../utils/regex');
 
 const userSchema = new mongoose.Schema({
@@ -50,7 +49,7 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(email,
     .select('+password')
     .then((user) => {
       if (!user) {
-        throw new ForbiddenError('Пользователь с данным email не найден');
+        throw new UnautorizedError('Неправильные почта или пароль');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
