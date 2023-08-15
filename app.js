@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimiter = require('express-rate-limit');
+const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const NotfoundError = require('./error/NotFoundError');
 
@@ -10,6 +11,7 @@ const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.en
 const app = express();
 
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 
 mongoose.connect(DB_URL, {
