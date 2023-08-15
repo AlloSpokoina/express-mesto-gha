@@ -23,7 +23,7 @@ mongoose.connect(DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
+app.use(errors());
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
@@ -31,8 +31,6 @@ app.use('/cards', require('./routes/cards'));
 app.use('*', (req, res, next) => {
   next(new NotfoundError('Запрашиваемый ресурс не найден'));
 });
-
-app.use(errors());
 
 app.use((error, req, res, next) => {
   const { statusCode = 500, message } = error;
