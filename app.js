@@ -16,7 +16,7 @@ const limiter = rateLimiter({
 app.use(limiter);
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 
 mongoose.connect(DB_URL, {
