@@ -42,19 +42,24 @@ module.exports.deleteCard = (req, res, next) => {
       if (!card.owner.equals(req.user._id)) {
         throw new ForbiddenError('Карточка загружена другим пользователем, вы не можете удалить данную карточку');
       }
-      return card.deleteOne()
+      Card.deleteOne(card)
+        .orFail()
         .then(() => {
           res.status(HTTP_STATUS_OK).send({ message: 'Карточка удалена' });
         })
         .catch((error) => {
-          next(error);
+          if (error instanceof mongoose.Error.DocumentNotFoundError) {
+            next(new NotFoundError('Карточка с заданным _id не найдена.'));
+          } else if (error instanceof mongoose.Error.CastError) {
+            next(new BadRequestError('Некорректный _id карточки'));
+          } else {
+            next(error);
+          }
         });
     })
     .catch((error) => {
       if (error instanceof mongoose.Error.DocumentNotFoundError) {
         next(new NotFoundError(`Карточка с _id: ${req.params.cardId} не найдена.`));
-      } else if (error instanceof mongoose.Error.CastError) {
-        next(new BadRequestError('Некорректный _id карточки'));
       } else {
         next(error);
       }
