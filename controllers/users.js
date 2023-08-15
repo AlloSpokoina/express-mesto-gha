@@ -6,6 +6,7 @@ const User = require('../models/user');
 const BadRequestError = require('../error/BadRequestError');
 const NotFoundError = require('../error/NotFoundError');
 const ConflictError = require('../error/ConflictError');
+const UnautorizedError = require('../error/UnautorizedError');
 
 const { SECRET_KEY = 'mestogha' } = process.env;
 
@@ -92,12 +93,24 @@ module.exports.login = (req, res, next) => {
       res.send({ token });
     })
     .catch((error) => {
-      next(error);
+      if (error.name === 'AuthorizationError') {
+        next(new UnautorizedError(error.message));
+      } else {
+        next(error);
+      }
     });
 };
 
 module.exports.getMeUser = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => res.status(HTTP_STATUS_OK).send(user))
-    .catch(next);
+    .then((user) => {
+      if (user) {
+        res.status(HTTP_STATUS_OK).send(user);
+      } else {
+        next(new NotFoundError('Пользователь не найден.'));
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
 };
