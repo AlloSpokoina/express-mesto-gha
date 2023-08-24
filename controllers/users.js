@@ -94,7 +94,7 @@ module.exports.login = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'AuthorizationError') {
-        next(new UnautorizedError(error.message));
+        throw new UnautorizedError(error.message);
       } else {
         next(error);
       }
